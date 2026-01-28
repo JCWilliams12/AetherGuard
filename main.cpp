@@ -5,7 +5,7 @@ extern "C" {
     #include "sqlite3.h"
 }
 
-int openDatabase(){
+void openDatabase(){
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc;
@@ -14,7 +14,6 @@ int openDatabase(){
 
     if( rc ) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return(0);
     } else {
         fprintf(stderr, "Opened database successfully\n");
     }
@@ -23,5 +22,5 @@ int openDatabase(){
 
 int main(){
     openDatabase();
-    return 1;
+    
 }

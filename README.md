@@ -11,5 +11,9 @@ Instalation:
 
 -=-=-=-=-=-=-TO RUN-=-=-=-=-=-=-=-=-=-
 paste the following in the terminal:
-mingw32-make
-./main.exe
+Windows:
+    mingw32-make
+    ./main.exe
+Linux:
+    make
+    ./main.exe
