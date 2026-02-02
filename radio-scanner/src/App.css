@@ -56,3 +56,63 @@ h1 {
 .main-btn:active {
   transform: scale(0.98);
 }
+
+/* --- NEW ADDITIONS FOR DATABASE & TABLES --- */
+
+/* Wrapper for the database view to allow scrolling if data is long */
+.database-view-wrapper {
+  width: 90vw;
+  max-width: 1000px;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Table Styling */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden; /* Rounds the corners of the table */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.data-table thead {
+  background-color: #646cff;
+  color: white;
+}
+
+.data-table th, 
+.data-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.data-table tbody tr:hover {
+  background-color: #242424;
+}
+
+/* Back button styling for the database view */
+.back-btn {
+  align-self: flex-start;
+  padding: 10px 20px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.back-btn:hover {
+  background-color: #555;
+}
+
+/* Ensuring text inside the view is readable */
+p {
+  color: #ccc;
+  margin-bottom: 1rem;
+}

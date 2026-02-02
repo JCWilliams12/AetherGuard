@@ -2,10 +2,12 @@
 CC = gcc
 CXX = g++
 CFLAGS = -O2
+# Added pthread and boost flags for Crow
 CXXFLAGS = -std=c++17 -O2
+LIBS = -lpthread -lboost_system
 
-# The final executable name
-TARGET = main.exe
+# The final executable name (Linux standard is usually just 'main')
+TARGET = main
 
 # The object files
 OBJS = main.o sqlite3.o
@@ -14,8 +16,9 @@ OBJS = main.o sqlite3.o
 all: $(TARGET)
 
 # Linking the executable
+# Added $(LIBS) here so Crow can use networking and threads
 $(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET)
+	$(CXX) $(OBJS) -o $(TARGET) $(LIBS)
 
 # Compiling main.cpp as C++
 main.o: main.cpp
@@ -27,4 +30,4 @@ sqlite3.o: sqlite3.c
 
 # Clean up build files
 clean:
-	del *.o *.exe
+	rm -f *.o $(TARGET)
