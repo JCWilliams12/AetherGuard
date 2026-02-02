@@ -1,0 +1,58 @@
+/* Ensure the root div takes up the full screen height */
+#root {
+  /* method is to make sure the buttons and the lettering is centered.*/
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  place-items: center; /* Vertical and Horizontal centering */
+  min-height: 100vh;
+}
+
+.container {
+  /* this container contains the buttons and the title */
+  display: flex;
+  flex-direction: column; 
+  align-items: center;    /* to center buttons horizontally */
+  justify-content: center; /* to center buttons vertically */
+  text-align: center;
+  width: 100%;
+}
+
+h1 {
+  /* method for topogrophy of radio scanner & summarizer visible */
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  color: #ffffff;
+}
+
+.card {
+  display: flex;
+  flex-direction: column; /* stacking buttons vertically */
+  gap: 20px;             /* the space between buttons */
+  width: 100%;
+  max-width: 400px;      /* this should prevent buttons from getting too wide */
+}
+
+.main-btn {
+  /* method is the static backend for the buttons on homepage */
+  padding: 20px 40px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background-color: #646cff;
+  color: white;
+  transition: all 0.25s ease;
+}
+
+.main-btn:hover {
+  /* when a button is hovered over, this is what happens*/ 
+  transform: scale(1.05);
+  background-color: #747bff;
+  border-color: #ffffff;
+}
+
+.main-btn:active {
+  transform: scale(0.98);
+}
