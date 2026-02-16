@@ -7,8 +7,11 @@ Windows:
     cmake --build .
     .\Debug\server.exe
 Linux:
-    cd server/build
-    cmake --build .
+    brew install cmake
+    cd server
+    cmake -S . -B build
+    cmake --build build
+    cd build
     ./server
 
 -=-=-=-=-=-=-For Crow.h Just in case-=-=-=-=-=-=-=-=-=-
