@@ -116,3 +116,137 @@ p {
   color: #ccc;
   margin-bottom: 1rem;
 }
+
+/* new insertions*/
+/* Container for the scanning page */
+.scanning-container {
+  width: 90vw;
+  max-width: 1100px;
+}
+
+/* The Grid that holds the two boxes */
+.scanning-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+/* Individual Box Styling */
+.data-box {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.data-box h3 {
+  border-bottom: 1px solid #646cff;
+  padding-bottom: 10px;
+  margin-top: 0;
+}
+
+/* Frequency List Styling */
+.frequency-list {
+  list-style: none;
+  padding: 0;
+}
+
+.frequency-list li {
+  padding: 10px;
+  border-bottom: 1px solid #222;
+}
+
+.freq-tag {
+  color: #646cff;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Buttons inside the Summary Box */
+.action-buttons {
+  margin-top: auto; /* Pushes buttons to the bottom of the box */
+  display: flex;
+  gap: 10px;
+}
+
+.sub-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #444;
+  color: white;
+}
+
+.gen-btn {
+  background: #646cff; /* Highlight the Generate button */
+}
+
+.sub-btn:hover {
+  filter: brightness(1.2);
+}
+
+/* Responsive fix for smaller screens */
+@media (max-width: 768px) {
+  .scanning-grid {
+    grid-template-columns: 1fr;
+  }
+} 
+
+
+/*For selection*/
+/* Make the list items look like buttons */
+.frequency-list li {
+  padding: 12px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+/* Hover effect */
+.frequency-list li:hover {
+  background-color: #2a2a2a;
+  transform: translateX(5px); /* Subtle slide effect */
+}
+
+/* 4. THE HIGHLIGHT: When a station is clicked/selected */
+.frequency-list li.active-station {
+  background-color: #3d3d5c; /* Darker blue/purple */
+  border-left: 4px solid #646cff; /* "Active" indicator stripe */
+  color: #ffffff;
+}
+
+.selection-status {
+  margin-top: auto;
+  font-size: 0.9rem;
+  color: #646cff;
+  padding-top: 10px;
+  border-top: 1px dashed #333;
+} 
+
+/*For database */
+
+/* Add this to your existing CSS */
+
+.delete-btn {
+  background-color: #b71c1c; /* Deep Red for deletion */
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+  filter: brightness(1.2);
+}
+
+/* Ensure the grid works in the database view wrapper too */
+.database-view-wrapper .scanning-grid {
+  width: 100%;
+}
