@@ -2,7 +2,7 @@
 #include <string>
 #include <stdio.h>
 extern "C" {
-    #include "sqlite3.h"
+    #include "database_methods\sqlite3.h"
 }
 #include "crow.h"
 
