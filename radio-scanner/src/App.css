@@ -1,3 +1,8 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #1e1e1e; /* Classic macOS Dark Mode Grey */
+
 /* Ensure the root div takes up the full screen height */
 #root {
   /* method is to make sure the buttons and the lettering is centered.*/
@@ -6,6 +11,7 @@
   display: flex;
   place-items: center; /* Vertical and Horizontal centering */
   min-height: 100vh;
+  background-color: #1e1e1e; /* Match the background here for other pages */
 }
 
 .container {
@@ -249,4 +255,5 @@ p {
 /* Ensure the grid works in the database view wrapper too */
 .database-view-wrapper .scanning-grid {
   width: 100%;
+}
 }
