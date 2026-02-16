@@ -3,11 +3,13 @@
 -=-=-=-=-=-=-TO RUN-=-=-=-=-=-=-=-=-=-
 paste the following in the terminal:
 Windows:
-    mingw32-make
-    ./main.exe
+    cd server/build
+    cmake --build .
+    .\Debug\server.exe
 Linux:
-    make
-    ./main
+    cd server/build
+    cmake --build .
+    ./server
 
 -=-=-=-=-=-=-For Crow.h Just in case-=-=-=-=-=-=-=-=-=-
 wget https://github.com/CrowCpp/Crow/releases/download/v1.2.0/crow_all.h -O crow.h
