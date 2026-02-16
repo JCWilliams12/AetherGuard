@@ -1,42 +1,25 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-*.db
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
+# --- C++ Build Artifacts ---
+server/build/
 *.exe
-*.out
-*.app
+*.obj
+*.o
+*.lib
+*.dll
+*.dylib
+*.so
 
-# debug information files
-*.dwo
+# --- Node/React Dependencies (Massive folders) ---
+client/node_modules/
+client/dist/
+client/.env
+
+# --- Database (NEVER commit live data) ---
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+
+# --- OS / Editor Junk ---
+.DS_Store
+.vscode/
+.idea/
+*.swp
