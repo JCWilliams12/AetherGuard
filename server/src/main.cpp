@@ -1,25 +1,9 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
-extern "C" {
-    #include "sqlite3.h"
-}
+#include "dbcorefunctions.hpp"
 #include "crow.h"
 
-void openDatabase(){
-    sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
-
-    rc = sqlite3_open("test.db", &db);
-
-    if( rc ) {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-    } else {
-        fprintf(stderr, "Opened database successfully\n");
-    }
-    sqlite3_close(db);
-}
 
 void openFrontEnd(){
     crow::SimpleApp app;
@@ -66,7 +50,6 @@ void openFrontEnd(){
 }
 
 int main(){
-    openDatabase();
     openFrontEnd();
     return 0; 
 }

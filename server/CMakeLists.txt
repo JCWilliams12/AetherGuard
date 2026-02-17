@@ -3,25 +3,37 @@ project(AetherGuardServer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Suppress those annoying warnings about type conversion
+# Suppress annoying warnings about type conversion
 if(MSVC)
     add_compile_options(/wd4267 /wd4244)
 endif()
 
-# Include directories
+# --- 1. INCLUDE DIRECTORIES (Where .h files live) ---
+# This allows you to include headers without typing full paths
 include_directories(include)
 include_directories(src/db)
+include_directories(src/dbfunction/corefunction)
+include_directories(src/dbfunction/filterfunction)
+include_directories(src/iqwav2wav)
+include_directories(src/ollamatest)
+include_directories(src/openai/summarizer)
+include_directories(src/openai/transcriber)
+include_directories(src/sdr)
 
-# Find Threads
+# Find Threads (Critical for Crow)
 find_package(Threads REQUIRED)
 
-# Define the executable
+# --- 2. FIND SOURCES (The "Auto-Discovery" Magic) ---
+# This command finds ALL .cpp files inside src/ and its subfolders automatically.
+file(GLOB_RECURSE APP_SOURCES "src/*.cpp")
+
+# --- 3. DEFINE EXECUTABLE ---
 add_executable(server 
-    src/main.cpp
-    src/db/sqlite3.c
+    ${APP_SOURCES}      # Includes main.cpp and all your new folder implementations
+    src/db/sqlite3.c    # SQLite is C, so we keep it separate
 )
 
-# LINKING LOGIC (The Fix)
+# --- 4. LINKING LOGIC ---
 if(WIN32)
     # On Windows, link against Winsock (Ws2_32)
     target_link_libraries(server Threads::Threads Ws2_32)
