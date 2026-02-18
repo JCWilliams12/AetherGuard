@@ -4,6 +4,7 @@
 #include "dbcorefunctions.hpp"
 #include "dbcorefilter.hpp"
 #include "crow.h"
+#include "ollamatest.hpp"
 
 
 void openFrontEnd(){
@@ -96,6 +97,5 @@ void openFrontEnd(){
 }
 
 int main(){
-    openFrontEnd();
     return 0; 
 }
