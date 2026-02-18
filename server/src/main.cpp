@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "dbcorefunctions.hpp"
 #include "crow.h"
+#include "ollamatest.hpp"
 
 
 void openFrontEnd(){
@@ -50,6 +51,5 @@ void openFrontEnd(){
 }
 
 int main(){
-    openFrontEnd();
     return 0; 
 }
