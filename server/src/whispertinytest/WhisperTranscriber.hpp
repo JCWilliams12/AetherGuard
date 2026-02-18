@@ -9,6 +9,17 @@
 #include <sstream>
 #include <cstdio>
 
+#ifdef _WIN32
+    // Windows mapping to the Microsoft C Runtime Library
+    #define popen _popen
+    #define pclose _pclose
+#else
+    // POSIX standard definitions (Linux/macOS)
+    // No mapping needed, but including them for clarity
+    #define popen popen
+    #define pclose pclose
+#endif
+
 namespace fs = std::filesystem;
 
 class WhisperTranscriber {
