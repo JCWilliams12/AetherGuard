@@ -5,6 +5,7 @@
 #include "dbcorefilter.hpp"
 #include "crow.h"
 #include "ollamatest.hpp"
+#include "WhisperTranscriber.hpp"
 
 
 void openFrontEnd(){

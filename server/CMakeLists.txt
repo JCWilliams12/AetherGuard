@@ -19,6 +19,8 @@ include_directories(src/ollamatest)
 include_directories(src/openai/summarizer)
 include_directories(src/openai/transcriber)
 include_directories(src/sdr)
+include_directories(src/whispertinytest)
+
 
 # Find Threads (Critical for Crow)
 find_package(Threads REQUIRED)
