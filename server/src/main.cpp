@@ -5,7 +5,7 @@
 #include "dbcorefilter.hpp"
 #include "crow.h"
 #include "ollamatest.hpp"
-#include "WhisperTranscriber.hpp"
+#include "whispertinytest.hpp"
 
 
 void openFrontEnd(){
@@ -28,8 +28,8 @@ void openFrontEnd(){
     app.port(8080).multithreaded().run();
 }
 
-int main(){
-    //createTable();
-    //openFrontEnd(); 
-    return 0; 
+namespace fs = std::filesystem;
+
+int main() {
+    return 0;
 }

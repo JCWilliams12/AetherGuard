@@ -18,6 +18,8 @@ database/*.db
 database/*.sqlite
 database/*.sqlite3
 
+build
+
 # --- OS / Editor Junk ---
 .DS_Store
 .vscode/

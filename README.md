@@ -3,9 +3,9 @@
 -=-=-=-=-=-=-TO RUN-=-=-=-=-=-=-=-=-=-
 paste the following in the terminal:
 Windows:
-    cd server/build
-    cmake --build .
-    .\Debug\server.exe
+    cmake --build build
+    .\build\Debug\server.exe
+    
 Linux:
     brew install cmake
     cd server
