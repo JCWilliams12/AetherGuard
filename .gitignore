@@ -19,6 +19,7 @@ database/*.sqlite
 database/*.sqlite3
 
 build
+server/src/whispertinytest/ggml-base.en.bin
 
 # --- OS / Editor Junk ---
 .DS_Store
