@@ -14,9 +14,9 @@ client/dist/
 client/.env
 
 # --- Database (NEVER commit live data) ---
-database/*.db
-database/*.sqlite
-database/*.sqlite3
+*.db
+*.sqlite
+*.sqlite3
 
 build
 server/src/whispertinytest/ggml-base.en.bin

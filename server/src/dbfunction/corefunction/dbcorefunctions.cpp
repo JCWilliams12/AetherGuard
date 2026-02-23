@@ -6,7 +6,7 @@ extern "C" {
     #include "sqlite3.h"
 }
 
-const char* DB_NAME = "../../database/app.db";
+const char* DB_NAME = "server/src/database/app.db";
 
 // -=- CREATE TABLE -=-
 // Creates the table only if it doesn't exist yet.
@@ -169,7 +169,7 @@ void openDatabase(){
     char *zErrMsg = 0;
     int rc;
 
-    rc = sqlite3_open("test.db", &db);
+    rc = sqlite3_open(DB_NAME, &db);
 
     if( rc ) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
