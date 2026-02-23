@@ -6,7 +6,7 @@ extern "C" {
     #include "sqlite3.h"
 }
 
-const char* DB_NAME = "server/src/database/app.db";
+const char* DB_NAME = "server/database/app.db";
 
 // -=- CREATE TABLE -=-
 // Creates the table only if it doesn't exist yet.
@@ -90,37 +90,85 @@ void insertLog(double freq, long long time, std::string location, std::string te
 
 // -=- 3. QUERY ALL (Helper) -=-
 // This function is called once for every row found in the database.
-static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
-    for (int i = 0; i < argc; i++) {
-        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-    }
-    printf("\n");
-    return 0;
-}
+// static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
+//     for (int i = 0; i < argc; i++) {
+//         printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+//     }
+//     printf("\n");
+//     return 0;
+// }
 
-// -=- QUERY ALL FUNCTION -=-
-void getAllLogs() {
+// // -=- QUERY ALL FUNCTION -=-
+// void getAllLogs() {
+//     sqlite3 *db;
+//     char *zErrMsg = 0;
+//     int rc;
+
+//     rc = sqlite3_open(DB_NAME, &db);
+//     if (rc) {
+//         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+//         return;
+//     }
+
+//     const char *sql = "SELECT * FROM RadioLogs ORDER BY time DESC;";
+
+//     rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+
+//     if (rc != SQLITE_OK) {
+//         fprintf(stderr, "SQL error: %s\n", zErrMsg);
+//         sqlite3_free(zErrMsg);
+//     }
+
+//     sqlite3_close(db);
+// }
+
+std::vector<RadioLog> getAllLogs() {
+    std::vector<RadioLog> logs;
     sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
+    sqlite3_stmt *stmt;
 
-    rc = sqlite3_open(DB_NAME, &db);
-    if (rc) {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return;
+    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) {
+        std::cerr << "Can't open database: "  << sqlite3_errmsg(db) << std::endl;
+        return logs;
     }
 
-    const char *sql = "SELECT * FROM RadioLogs ORDER BY time DESC;";
+    const char *sql = "SELECT radiofrequency, time, location, text textSummary FROM RadioLogs ORDER BY time DESC;";
 
-    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
-
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) != SQLITE_OK) {
+        std::cerr << "SQL error: " <<sqlite3_errmsg(db) << std::endl;
+        sqlite3_close(db);
+        return logs;
     }
 
+    std::cout << "\n--- Terminal Deug: Fetching Logs ---" <<std::endl;
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        RadioLog log;
+        log.frequency = sqlite3_column_double(stmt, 0);
+        log.time      = sqlite3_column_int64(stmt, 1);
+
+        const unsigned char* loc = sqlite3_column_text(stmt, 2);
+        log.location = loc ? reinterpret_cast<const char*>(loc) : "";
+
+        const unsigned char* text = sqlite3_column_text(stmt, 3);
+        log.text = text ? reinterpret_cast<const char*>(text) : "";
+
+        const unsigned char* sum = sqlite3_column_text(stmt, 4);
+        log.summary = sum ? reinterpret_cast<const char*>(sum) : "";
+
+        // Still printing to terminal for you!
+        std::cout << "Found: " << log.frequency << " MHz | Summary: " << log.summary << std::endl;
+
+        logs.push_back(log);
+    }
+    std::cout << "Total logs sent to frontend: " << logs.size() << "\n" << std::endl;
+
+    sqlite3_finalize(stmt);
     sqlite3_close(db);
+    return logs;
 }
+
+
 
 // -=- 4. REMOVE ROW -=-
 // Deletes a specific log based on its unique Composite Key (Freq + Time)
