@@ -13,7 +13,7 @@ function App() {
 
   //Data Fetching
   useEffect(() => {
-    fetch('/api/stations')
+    fetch('http://localhost:8080/stations')
       .then((res) => res.json())
       .then((data) => setStations(data))
       .catch((err) => console.error("Link to C++ failed:", err));

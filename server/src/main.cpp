@@ -13,23 +13,39 @@ void openFrontEnd(){
 
     // Route for the left table (Stations)
     // Note that for future use we will be using CROW_ROUTE to direct data into certain tables.
-    CROW_ROUTE(app, "/stations")([](){
-        crow::json::wvalue x;
-        x[0] = {{"id", 1}, {"name", "Emergency Dispatch"}, {"freq", "460.125 MHz"}};
-        x[1] = {{"id", 2}, {"name", "Air Traffic Control"}, {"freq", "118.700 MHz"}};
-        x[2] = {{"id", 3}, {"name", "Marine Channel 16"}, {"freq", "156.800 MHz"}};
-        x[3] = {{"id", 4}, {"name", "Ham Radio (2m)"}, {"freq", "144.200 MHz"}};
-        x[4] = {{"id", 5}, {"name", "Local Fire Dept"}, {"freq", "154.250 MHz"}};
-        return x;
-    });
+CROW_ROUTE(app, "/stations")([](){
+    std::vector<RadioLog> logs = getAllLogs();
+    crow::json::wvalue response;
     
+    // 1. Prepare the JSON data first
+    if (logs.empty()) {
+        response = crow::json::wvalue(crow::json::type::List);
+    } else {
+        for (size_t i = 0; i < logs.size(); i++) {
+            response[i]["id"] = i;
+            response[i]["freq"] = std::to_string(logs[i].frequency) + " MHz";
+            response[i]["time"] = logs[i].time;
+            response[i]["location"] = logs[i].location;
+            response[i]["name"] = logs[i].summary; 
+        }
+    }
 
-    std::cout << "AetherGaurd running on port 8080..." << std::endl;
+    // 2. NOW create the single response object and return it
+    crow::response res(response);
+    res.add_header("Access-Control-Allow-Origin", "*");
+    return res; 
+});
+    std::cout << "AetherGuard running on port 8080..." << std::endl;
     app.port(8080).multithreaded().run();
 }
 
-namespace fs = std::filesystem;
-
 int main() {
+    // Initialize DB table before starting server
+    createTable();
+
+    insertLog(144.200, 1718900000, "Montevallo, AL", "Testing signal strength", "Test Entry");
+    // Launch the Crow server
+    openFrontEnd();
+
     return 0;
 }
