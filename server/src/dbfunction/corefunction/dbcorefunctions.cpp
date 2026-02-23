@@ -6,7 +6,7 @@ extern "C" {
     #include "sqlite3.h"
 }
 
-const char* DB_NAME = "server/src/database/app.db";
+const char* DB_NAME = "server/database/app.db";
 
 // -=- CREATE TABLE -=-
 // Creates the table only if it doesn't exist yet.
