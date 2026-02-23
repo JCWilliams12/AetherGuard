@@ -2,31 +2,42 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  //State Management
+  // State Management
   const [view, setView] = useState('home');
   const [stations, setStations] = useState([]);
   const [activeSummary, setActiveSummary] = useState("Waiting for transcription...");
   
-  //Selection states for each view
+  // Selection states for each view
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedLog, setSelectedLog] = useState(null);
+  const [logs, setLogs] = useState([]);
 
-  //Data Fetching
-// 1. Define the fetch function so it can be called from anywhere
-const fetchStations = async () => {
-  try {
-    const res = await fetch('http://localhost:8080/stations');
-    const data = await res.json();
-    setStations(data);
-  } catch (err) {
-    console.error("Link to C++ failed:", err);
-  }
-};
+  // 1. Define BOTH fetch functions first
+  const fetchLogs = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/api/logs'); 
+      const data = await res.json();
+      setLogs(data);
+    } catch (err) {
+      console.error("Failed to fetch logs:", err);
+    }
+  };
 
-// 2. Call it once when the app first loads
-useEffect(() => {
-  fetchStations();
-}, []);
+  const fetchStations = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/stations');
+      const data = await res.json();
+      setStations(data);
+    } catch (err) {
+      console.error("Link to C++ failed:", err);
+    }
+  };
+
+  // 2. Call them in a SINGLE useEffect right after they are defined
+  useEffect(() => {
+    fetchStations();
+    fetchLogs(); 
+  }, []);
 
   //Action Handlers
   const handleSave = () => {
@@ -42,24 +53,19 @@ useEffect(() => {
   const handleDelete = async () => {
     if (selectedLog && window.confirm(`Delete log for ${selectedLog.name}?`)) {
       try {
+        // Changed to POST and removed headers to bypass the CORS preflight blocker
         const response = await fetch(`http://localhost:8080/api/logs/delete`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', 
           body: JSON.stringify({
             freq: parseFloat(selectedLog.freq), 
             time: selectedLog.time
           }),
         });
   
-        if (response.ok) { // This catches 200, 201, 204, etc.
+        if (response.ok) { 
           console.log("Successfully deleted log ID:", selectedLog.id);
-          
-          // 1. Clear the selection so the details panel goes blank
           setSelectedLog(null);
-          
-          // 2. REFRESH THE TABLE by asking the server for the updated list
-          await fetchStations(); 
-          
+          await fetchLogs(); 
         } else {
           alert("Failed to delete log on the server.");
         }
@@ -95,15 +101,17 @@ useEffect(() => {
             <div className="data-box">
               <h3>Saved Logs</h3>
               <ul className="frequency-list">
-                {stations.map(s => (
+                {/* Map over LOGS here, not stations */}
+                {logs.map(log => (
                   <li 
-                    key={s.id}
-                    onClick={() => setSelectedLog(s)}
-                    className={selectedLog?.id === s.id ? "active-station" : ""}
+                    key={log.id}
+                    onClick={() => setSelectedLog(log)}
+                    className={selectedLog?.id === log.id ? "active-station" : ""}
                   >
                     <div className="station-item-content">
-                      <span className="freq-tag">{s.freq}</span>
-                      <span className="station-name">{s.name}</span>
+                      <span className="freq-tag">{log.freq}</span>
+                      {/* Using a fallback like "Unknown" helps prevent blank spaces if the DB name is empty */}
+                      <span className="station-name">{log.name || "Unknown"}</span>
                     </div>
                   </li>
                 ))}

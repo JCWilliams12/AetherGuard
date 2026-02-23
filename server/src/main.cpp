@@ -12,26 +12,44 @@ void openFrontEnd(){
     crow::SimpleApp app;
 
     // =======================================================
-    // ROUTE 1: GET ALL STATIONS
+    // ROUTE 1: GET LIVE STATIONS (For the Scanning View)
     // =======================================================
     CROW_ROUTE(app, "/stations")([](){
+        // NOTE: Replace this mock data with your actual live scanner logic later!
+        crow::json::wvalue station1 = {{"id", 1}, {"name", "Live Scanner 1"}, {"freq", "144.200"}};
+        crow::json::wvalue station2 = {{"id", 2}, {"name", "Live Scanner 2"}, {"freq", "155.100"}};
+        
+        std::vector<crow::json::wvalue> station_list = {station1, station2};
+        
+        // FIX: Create the JSON object first, THEN pass it to the response
+        crow::json::wvalue json_data(station_list);
+        crow::response res(json_data); 
+        
+        res.add_header("Access-Control-Allow-Origin", "*");
+        return res;
+    });
+
+    // =======================================================
+    // ROUTE 1.5: GET SAVED LOGS (For the Database View)
+    // =======================================================
+    CROW_ROUTE(app, "/api/logs")([](){
+        // This pulls from your sqlite database!
         std::vector<RadioLog> logs = getAllLogs();
         crow::json::wvalue response;
         
-        // Prepare the JSON data first
         if (logs.empty()) {
             response = crow::json::wvalue(crow::json::type::List);
         } else {
             for (size_t i = 0; i < logs.size(); i++) {
-                response[i]["id"] = i;
-                response[i]["freq"] = std::to_string(logs[i].frequency) + " MHz";
+                response[i]["id"] = i; 
+                // Removed the " MHz" text here so React's parseFloat() in the delete function works perfectly
+                response[i]["freq"] = std::to_string(logs[i].frequency); 
                 response[i]["time"] = logs[i].time;
                 response[i]["location"] = logs[i].location;
                 response[i]["name"] = logs[i].summary; 
             }
         }
 
-        // Return the response object
         crow::response res(response);
         res.add_header("Access-Control-Allow-Origin", "*");
         return res; 
@@ -39,21 +57,13 @@ void openFrontEnd(){
 
 
     // =======================================================
-    // ROUTE 2: DELETE A LOG (Handles both OPTIONS and DELETE)
+    // ROUTE 2: DELETE A LOG (Using POST to bypass CORS)
     // =======================================================
-    CROW_ROUTE(app, "/api/logs/delete").methods(crow::HTTPMethod::Delete, crow::HTTPMethod::Options)
+    CROW_ROUTE(app, "/api/logs/delete").methods(crow::HTTPMethod::Post)
     ([](const crow::request& req) {
         
-        // 1. Handle the browser's "pre-flight" security check
-        if (req.method == crow::HTTPMethod::Options) {
-            crow::response res(200); // "Yes, you are allowed"
-            res.add_header("Access-Control-Allow-Origin", "*");
-            res.add_header("Access-Control-Allow-Methods", "DELETE, OPTIONS");
-            res.add_header("Access-Control-Allow-Headers", "Content-Type");
-            return res;
-        }
-
-        // 2. Handle the actual DELETE request
+        std::cout << "\n--- INCOMING DELETE REQUEST ---" << std::endl;
+        
         auto x = crow::json::load(req.body);
         if (!x) {
             crow::response res(400, "Bad JSON");
@@ -61,12 +71,15 @@ void openFrontEnd(){
             return res;
         }
 
-        // Extract variables and call your dbcorefunctions logic
-        double freq = x["freq"].d();
-        long long time = x["time"].i();
+        // Extract variables
+        double freq = x.has("freq") ? x["freq"].d() : 0.0;
+        long long time = x.has("time") ? x["time"].i() : 0;
+
+        std::cout << "Executing removeLog(" << freq << ", " << time << ")..." << std::endl;
+        
+        // Actually call the database function
         removeLog(freq, time);
 
-        // Send the success response back to React
         crow::response res(200);
         res.add_header("Access-Control-Allow-Origin", "*");
         return res;
@@ -98,7 +111,7 @@ int main() {
 
     insertLog(144.200, 1718900000, "Birmingham, AL", "Testing signal strength", "Test Entry");
     // Launch the Crow server
-    getAllLogs(); 
+    openFrontEnd();
     
     return 0;
 }

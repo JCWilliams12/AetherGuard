@@ -132,7 +132,7 @@ std::vector<RadioLog> getAllLogs() {
         return logs;
     }
 
-    const char *sql = "SELECT radiofrequency, time, location, text textSummary FROM RadioLogs ORDER BY time DESC;";
+    const char *sql = "SELECT radiofrequency, time, location, text, textSummary FROM RadioLogs ORDER BY time DESC;";
 
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) != SQLITE_OK) {
         std::cerr << "SQL error: " <<sqlite3_errmsg(db) << std::endl;
@@ -183,8 +183,8 @@ int removeLog(double freq, long long time) {
         return 0;
     }
 
-    const char *sql = "DELETE FROM RadioLogs WHERE ABS(radiofrequency - ?) < 0.01 AND time = ?;";
-
+    const char *sql = "DELETE FROM RadioLogs WHERE ROUND(radiofrequency, 3) = ROUND(?, 3) AND time = ?;";
+        
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
     if (rc != SQLITE_OK) {
