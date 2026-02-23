@@ -43,7 +43,7 @@ int main() {
     // Initialize DB table before starting server
     createTable();
 
-    insertLog(144.200, 1718900000, "Montevallo, AL", "Testing signal strength", "Test Entry");
+    insertLog(144.200, 1718900000, "Birmingham, AL", "Testing signal strength", "Test Entry");
     // Launch the Crow server
     openFrontEnd();
 

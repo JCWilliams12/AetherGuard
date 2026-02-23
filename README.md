@@ -8,11 +8,10 @@ Windows:
     
 Linux:
     brew install cmake
-    cd server
-    cmake -S . -B build
-    cmake --build build
-    cd build
-    ./server
+    from root:
+        cmake -S . -B build
+        cmake --build build
+        ./build/server
 
 -=-=-=-=-=-=-For Crow.h Just in case-=-=-=-=-=-=-=-=-=-
 wget https://github.com/CrowCpp/Crow/releases/download/v1.2.0/crow_all.h -O crow.h
