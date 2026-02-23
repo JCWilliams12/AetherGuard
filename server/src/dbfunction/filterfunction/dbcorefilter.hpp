@@ -1,13 +1,14 @@
-#ifndef DB_CORE_FUNCTIONS_HPP
-#define DB_CORE_FUNCTIONS_HPP
+#ifndef DBCOREFILTERHPP
+#define DBCOREFILTERHPP
 
 #include <string>
 
-// Export the DB_NAME so dbcorefilter.cpp can use it
+// Global database path
 extern const char* DB_NAME;
 
+// Filter functions
 std::string filterByFrequency(double freq);
-std::string filterByExactTime(long long targetTime);
-std::string filterByDateString(std::string dateStr);
-std::string filterCompositeExact(double freq, long long targetTime);
+std::string filterByTime(long long unixTime); // Updated name to match your .cpp
+std::string filterByLocation(std::string loc);
+
 #endif

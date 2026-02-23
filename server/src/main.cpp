@@ -45,7 +45,36 @@ int main() {
 
     insertLog(144.200, 1718900000, "Birmingham, AL", "Testing signal strength", "Test Entry");
     // Launch the Crow server
-    openFrontEnd();
 
+    openFrontEnd();
     return 0;
 }
+
+/*
+William's: 
+// Initialize DB table before starting server
+    createTable();
+
+    insertLog(144.200, 1718900000, "Montevallo, AL", "Testing signal strength", "Test Entry");
+    // Launch the Crow server
+Daniel's
+    // 1. Simulate a "Filter by Frequency" Button Click
+    std::cout << "--- EVENT: User clicked 144.20 MHz ---" << std::endl;
+    std::string freqResult = filterByFrequency(144.20);
+    std::cout << freqResult << std::endl;
+
+    // 2. Simulate a "Location Search" Event
+    std::cout << "--- EVENT: User searched for 'London' ---" << std::endl;
+    std::string locResult = filterByLocation("Motevallo");
+    std::cout << locResult << std::endl;
+
+    // 3. Simulate a "Time" selection (Unix for Feb 23, 2026, 1:30 PM)
+    // In a real app, this unixTime would come from your UI clock
+    long long mockUnixTime = 1718900000; 
+    std::cout << "--- EVENT: User selected timestamp " << mockUnixTime << " ---" << std::endl;
+    std::string timeResult = filterByTime(mockUnixTime);
+    std::cout << timeResult << std::endl;
+
+    openFrontEnd();
+
+*/
