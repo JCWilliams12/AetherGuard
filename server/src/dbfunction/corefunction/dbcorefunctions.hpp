@@ -1,24 +1,25 @@
 #ifndef DBCOREFUNCTIONS_HPP
 #define DBCOREFUNCTIONS_HPP
+
 #include <string>
 #include <vector>
 
 // The "Container" for your radio data
 struct RadioLog {
-    double frequency;
+    double freq;
     long long time;
     std::string location;
-    std::string text;
+    std::string rawT;
     std::string summary;
+    std::string channelName;
 };
 
 void createTable();
-void insertLog(double freq, long long time, std::string location, std::string text, std::string summary);
-int removeLog(double freq, long long time);
+void insertLog(double freq, long long time, std::string location, std::string rawT, std::string summary, std::string channelName);
+int removeLog(double freq, long long time, std::string location);
 void openDatabase();
 
 // Updated to return a vector of the struct above
 std::vector<RadioLog> getAllLogs();
 
 #endif
-

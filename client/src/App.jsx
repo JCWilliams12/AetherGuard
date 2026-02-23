@@ -39,26 +39,50 @@ function App() {
     fetchLogs(); 
   }, []);
 
-  //Action Handlers
-  const handleSave = () => {
+  // Action Handlers
+  const handleSave = async () => {
     if (!selectedStation) {
       alert("Please select a frequency first!");
       return;
     }
-    console.log("Saving to database for:", selectedStation.name);
-    //Logic for POST request to Crow goes here
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/logs/save`, {
+        method: 'POST',
+        body: JSON.stringify({
+          freq: parseFloat(selectedStation.freq),
+          time: Math.floor(Date.now() / 1000), // Get current Unix timestamp
+          location: "Birmingham, AL", // Hardcoded for now, can be dynamic later!
+          rawT: "Raw audio transmission captured...", // Placeholder for Whisper transcription
+          summary: activeSummary,
+          channelName: selectedStation.name
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Successfully saved log for:", selectedStation.name);
+        alert("Log saved successfully!");
+        
+        // Refresh the database table in the background so it's ready when you switch views
+        await fetchLogs();
+      } else {
+        alert("Failed to save log to the server.");
+      }
+    } catch (error) {
+      console.error("Connection error:", error);
+    }
   };
 
-  // 3. Update handleDelete to refresh the list
+  // 3. Update handleDelete to include location for the composite key
   const handleDelete = async () => {
     if (selectedLog && window.confirm(`Delete log for ${selectedLog.name}?`)) {
       try {
-        // Changed to POST and removed headers to bypass the CORS preflight blocker
         const response = await fetch(`http://localhost:8080/api/logs/delete`, {
           method: 'POST', 
           body: JSON.stringify({
             freq: parseFloat(selectedLog.freq), 
-            time: selectedLog.time
+            time: selectedLog.time,
+            location: selectedLog.location // <-- Added location to satisfy the C++ composite key!
           }),
         });
   
@@ -101,7 +125,6 @@ function App() {
             <div className="data-box">
               <h3>Saved Logs</h3>
               <ul className="frequency-list">
-                {/* Map over LOGS here, not stations */}
                 {logs.map(log => (
                   <li 
                     key={log.id}
@@ -110,7 +133,6 @@ function App() {
                   >
                     <div className="station-item-content">
                       <span className="freq-tag">{log.freq}</span>
-                      {/* Using a fallback like "Unknown" helps prevent blank spaces if the DB name is empty */}
                       <span className="station-name">{log.name || "Unknown"}</span>
                     </div>
                   </li>
@@ -125,14 +147,22 @@ function App() {
                   <>
                     <p className="summary-text"><strong>Station:</strong> {selectedLog.name}</p>
                     <p className="summary-text"><strong>Frequency:</strong> {selectedLog.freq}</p>
+                    {/* Added Location display */}
+                    <p className="summary-text"><strong>Location:</strong> {selectedLog.location}</p>
                     <hr style={{ borderColor: '#333', margin: '10px 0' }} />
-                    <p className="summary-text">AI Summary: [Stored Transcript Data]</p>
+                    {/* Replaced placeholder with ACTUAL summary and raw text */}
+                    <p className="summary-text"><strong>AI Summary:</strong> {selectedLog.summary || "No summary available"}</p>
+                    <br/>
+                    <p className="summary-text" style={{ fontSize: "0.85em", color: "#bbb" }}>
+                      <em>Raw Text: {selectedLog.rawT || "No raw text available"}</em>
+                    </p>
                   </>
                 ) : (
                   <p className="summary-text">Select a log to view details</p>
                 )}
               </div>
               <div className="action-buttons">
+                {/* Notice: You might not need a "Fetch" button anymore since clicking the log instantly loads the summary! */}
                 <button className="sub-btn scan-btn" disabled={!selectedLog}>Fetch</button>
                 <button className="sub-btn delete-btn" onClick={handleDelete} disabled={!selectedLog}>Delete</button>
               </div>
