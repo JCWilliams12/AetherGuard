@@ -29,94 +29,73 @@ static std::string formatRowAsString(sqlite3_stmt* stmt) {
     
     return box.str();
 }
-//Helper to conver YYYY - MM - DD HH:MM:SS to a unix time stamp 
-long long dateStringToUnix(std::string dateStr) {
-    struct tm t = {0};
-    std::istringstream ss(dateStr);
-    ss >> std::get_time(&t, "%Y-%m-%d %H:%M:%S");
-    if (ss.fail()) {
-        return -1; 
-    }
-    return (long long)mktime(&t);
-}
 
-// Filter by frequency 
+// Filter by Frequency
 std::string filterByFrequency(double freq) {
     sqlite3 *db;
     sqlite3_stmt *stmt;
-    std::string allResults = "";
+    std::string results = "";
 
-    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) return "Error: Could not open database.";
+    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) return "Error: DB Connection.";
 
     const char *sql = "SELECT * FROM RadioLogs WHERE radiofrequency = ? ORDER BY time DESC;";
     
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
         sqlite3_bind_double(stmt, 1, freq);
-        
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            allResults += formatRowAsString(stmt); 
+            results += formatRowAsString(stmt);
         }
     }
     sqlite3_finalize(stmt);
     sqlite3_close(db);
-
-    return allResults.empty() ? "No results found for that frequency." : allResults;
+    return results.empty() ? "No records found for that frequency." : results;
 }
 
-// Filter by exact time 
-std::string filterByExactTime(long long targetTime) {
+// Filter by Location
+std::string filterByLocation(std::string loc) {
+    sqlite3 *db;
+    sqlite3_stmt *stmt;
+    std::string results = "";
+
+    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) return "Error: DB Connection.";
+
+    const char *sql = "SELECT * FROM RadioLogs WHERE location LIKE ? ORDER BY time DESC;";  
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
+        std::string query = "%" + loc + "%";
+        sqlite3_bind_text(stmt, 1, query.c_str(), -1, SQLITE_TRANSIENT);
+        
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            results += formatRowAsString(stmt);
+        }
+    }
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+    return results.empty() ? "No records found for that location." : results;
+}
+
+// Filters logs within a 60-second window of the provided Unix timestamp
+std::string filterByTime(long long unixTime) {
     sqlite3 *db;
     sqlite3_stmt *stmt;
     std::string allResults = "";
 
     if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) return "Error: Could not open database.";
 
-    const char *sql = "SELECT * FROM RadioLogs WHERE time = ?;";
+    // everything from (time) to (time + 59 seconds) 
+    const char *sql = "SELECT * FROM RadioLogs WHERE time >= ? AND time <= ? ORDER BY time ASC;";
     
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
-        sqlite3_bind_int64(stmt, 1, targetTime);
+        sqlite3_bind_int64(stmt, 1, unixTime);
+        sqlite3_bind_int64(stmt, 2, unixTime + 59); // 1-minute window
         
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             allResults += formatRowAsString(stmt); 
         }
     }
+    
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 
-    return allResults.empty() ? "No results found for that timestamp." : allResults;
-}
-
-// Filter by date string 
-std::string filterByDateString(std::string dateStr) {
-    long long timestamp = dateStringToUnix(dateStr);
-    
-    if (timestamp != -1) {
-        return filterByExactTime(timestamp);
-    } else {
-        return "Error: Invalid date format. Please use YYYY-MM-DD HH:MM:SS";
-    }
-}
-
-// Filter by frequency and exact time 
-std::string filterCompositeExact(double freq, long long targetTime) {
-    sqlite3 *db;
-    sqlite3_stmt *stmt;
-    std::string allResults = "";
-
-    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) return "Error: Could not open database.";
-
-    const char *sql = "SELECT * FROM RadioLogs WHERE radiofrequency = ? AND time = ?;";
-    
-    if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
-        sqlite3_bind_double(stmt, 1, freq);
-        sqlite3_bind_int64(stmt, 2, targetTime);
-        
-        while (sqlite3_step(stmt) == SQLITE_ROW) {
-            allResults += formatRowAsString(stmt);
-        }
-    }
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
-
-    return allResults.empty() ? "No matching composite record found." : allResults;
+    return allResults.empty() ? "No results found for that time period." : allResults;
 }
