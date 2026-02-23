@@ -12,12 +12,21 @@ function App() {
   const [selectedLog, setSelectedLog] = useState(null);
 
   //Data Fetching
-  useEffect(() => {
-    fetch('http://localhost:8080/stations')
-      .then((res) => res.json())
-      .then((data) => setStations(data))
-      .catch((err) => console.error("Link to C++ failed:", err));
-  }, []);
+// 1. Define the fetch function so it can be called from anywhere
+const fetchStations = async () => {
+  try {
+    const res = await fetch('http://localhost:8080/stations');
+    const data = await res.json();
+    setStations(data);
+  } catch (err) {
+    console.error("Link to C++ failed:", err);
+  }
+};
+
+// 2. Call it once when the app first loads
+useEffect(() => {
+  fetchStations();
+}, []);
 
   //Action Handlers
   const handleSave = () => {
@@ -29,11 +38,34 @@ function App() {
     //Logic for POST request to Crow goes here
   };
 
-  const handleDelete = () => {
+  // 3. Update handleDelete to refresh the list
+  const handleDelete = async () => {
     if (selectedLog && window.confirm(`Delete log for ${selectedLog.name}?`)) {
-      console.log("Deleting log ID:", selectedLog.id);
-      //Logic for DELETE request to Crow goes here
-      setSelectedLog(null);
+      try {
+        const response = await fetch(`http://localhost:8080/api/logs/delete`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            freq: parseFloat(selectedLog.freq), 
+            time: selectedLog.time
+          }),
+        });
+  
+        if (response.ok) { // This catches 200, 201, 204, etc.
+          console.log("Successfully deleted log ID:", selectedLog.id);
+          
+          // 1. Clear the selection so the details panel goes blank
+          setSelectedLog(null);
+          
+          // 2. REFRESH THE TABLE by asking the server for the updated list
+          await fetchStations(); 
+          
+        } else {
+          alert("Failed to delete log on the server.");
+        }
+      } catch (error) {
+        console.error("Connection error:", error);
+      }
     }
   };
 

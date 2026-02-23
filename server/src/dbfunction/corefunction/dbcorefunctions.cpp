@@ -172,7 +172,7 @@ std::vector<RadioLog> getAllLogs() {
 
 // -=- 4. REMOVE ROW -=-
 // Deletes a specific log based on its unique Composite Key (Freq + Time)
-void removeLog(double freq, long long time) {
+int removeLog(double freq, long long time) {
     sqlite3 *db;
     sqlite3_stmt *stmt;
     int rc;
@@ -180,17 +180,17 @@ void removeLog(double freq, long long time) {
     rc = sqlite3_open(DB_NAME, &db);
     if (rc) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return;
+        return 0;
     }
 
-    const char *sql = "DELETE FROM RadioLogs WHERE radiofrequency = ? AND time = ?;";
+    const char *sql = "DELETE FROM RadioLogs WHERE ABS(radiofrequency - ?) < 0.01 AND time = ?;";
 
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
-        return;
+        return 0;
     }
 
     sqlite3_bind_double(stmt, 1, freq);
@@ -210,6 +210,7 @@ void removeLog(double freq, long long time) {
 
     sqlite3_finalize(stmt);
     sqlite3_close(db);
+    return 1; 
 }
 
 void openDatabase(){

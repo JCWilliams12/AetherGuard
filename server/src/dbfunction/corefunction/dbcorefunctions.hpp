@@ -14,7 +14,7 @@ struct RadioLog {
 
 void createTable();
 void insertLog(double freq, long long time, std::string location, std::string text, std::string summary);
-void removeLog(double freq, long long time);
+int removeLog(double freq, long long time);
 void openDatabase();
 
 // Updated to return a vector of the struct above
