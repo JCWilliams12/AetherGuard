@@ -3,6 +3,7 @@ html, body {
   padding: 0;
   background-color: #1e1e1e; /* Classic macOS Dark Mode Grey */
   color: #ffffff;
+} /* <-- Added missing closing brace here */
 
 /* Ensure the root div takes up the full screen height */
 #root {
@@ -265,4 +266,5 @@ p {
 .database-view-wrapper .scanning-grid {
   width: 100%;
 }
-}
+/* <-- Removed the extra closing brace from here */
+

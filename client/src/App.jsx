@@ -108,7 +108,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Radio Scanner & Summarizer</h1>
+      <h1>AetherGaurd</h1>
       
       {/* HOME VIEW */}
       {view === 'home' && (
@@ -117,6 +117,8 @@ function App() {
           <button className="main-btn" onClick={() => setView('database')}>Database</button>
         </div>
       )}
+
+
 
       {/* DATABASE VIEW */}
       {view === 'database' && (
@@ -134,6 +136,15 @@ function App() {
                     <div className="station-item-content">
                       <span className="freq-tag">{log.freq}</span>
                       <span className="station-name">{log.name || "Unknown"}</span>
+                      <span className="station-time" style={{marginLeft: "10px", fontSize: "0.85em", color: "#aaa"}}>
+                        {log.time ? new Date(log.time * 1000).toLocaleString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                          }) : "Unknown"}
+                      </span>
                     </div>
                   </li>
                 ))}
@@ -149,6 +160,7 @@ function App() {
                     <p className="summary-text"><strong>Frequency:</strong> {selectedLog.freq}</p>
                     {/* Added Location display */}
                     <p className="summary-text"><strong>Location:</strong> {selectedLog.location}</p>
+                    <p className="summary-text"><strong>Time:</strong> {selectedLog.time}</p>
                     <hr style={{ borderColor: '#333', margin: '10px 0' }} />
                     {/* Replaced placeholder with ACTUAL summary and raw text */}
                     <p className="summary-text"><strong>AI Summary:</strong> {selectedLog.summary || "No summary available"}</p>

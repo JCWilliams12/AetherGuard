@@ -139,7 +139,9 @@ int main() {
 
     // UPDATED SIGNATURE: freq, time, location, rawT, summary, channelName
     insertLog(144.200, 1718900000, "Birmingham, AL", "[Raw Audio Data]", "Testing signal strength", "Test Station");
-    
+    insertLog(182.500, 1289621000, "Decatur, AL", "[Raw Audio Data]", "AI summary", "Wocka Flocka");
+    insertLog(678.6767, 7518900000, "Mobile, AL", "[Raw Audio Data]", "AI summary", "Skibidi Toilet");
+    insertLog(157.570, 9718900000, "Huntsville, AL", "[Raw Audio Data]", "AI summary", "Big Leagues");
     // Launch the Crow server
     openFrontEnd();
     
