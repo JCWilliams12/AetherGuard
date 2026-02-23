@@ -99,7 +99,7 @@ int main() {
     insertLog(144.200, 1718900000, "Birmingham, AL", "Testing signal strength", "Test Entry");
     // Launch the Crow server
     getAllLogs(); 
-    openFrontEnd();
+    
     return 0;
 }
 
