@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <vector>
 #include "dbcorefunctions.hpp"
-// #include "dbcorefilter.hpp" // Uncomment when you need these again!
+#include "dbcorefilter.hpp"
 #include "crow.h"
-// #include "ollamatest.hpp"
-// #include "whispertinytest.hpp"
+#include "ollamatest.hpp"
+#include "whispertinytest.hpp"
 
 void openFrontEnd(){
     crow::SimpleApp app;
@@ -129,9 +129,66 @@ void openFrontEnd(){
         res.end();
     });
 
+    // =======================================================
+    // ROUTE: STEP 1 - WHISPER TRANSCRIPTION
+    // =======================================================
+    CROW_ROUTE(app, "/api/transcribe").methods(crow::HTTPMethod::Post)
+    ([](const crow::request& req) {
+        std::cout << "\n--- STEP 1: TRANSCRIPTION REQUEST ---" << std::endl;
+
+        std::string base_folder = "server/src/whispertinytest/";
+        std::string model_path  = base_folder + "ggml-base.en.bin";
+        std::string wav_path    = base_folder + "audio.wav";
+
+        WhisperTest transcriber(model_path);
+        
+        std::string text = transcriber.transcribe(wav_path);
+        std::cout << "Whisper complete!" << std::endl;
+
+        crow::json::wvalue response;
+        response["transcription"] = text;
+
+        crow::response res(response);
+        res.add_header("Access-Control-Allow-Origin", "*");
+        return res;
+    });
+
+    // =======================================================
+    // ROUTE: STEP 2 - OLLAMA SUMMARIZATION
+    // =======================================================
+    CROW_ROUTE(app, "/api/summarize").methods(crow::HTTPMethod::Post)
+    ([](const crow::request& req) {
+        std::cout << "\n--- STEP 2: SUMMARIZE REQUEST ---" << std::endl;
+        
+        auto x = crow::json::load(req.body);
+        if (!x) {
+            crow::response res(400, "Bad JSON");
+            res.add_header("Access-Control-Allow-Origin", "*");
+            return res;
+        }
+
+        // Grab the raw text that React sent us
+        std::string raw_text = x.has("text") ? std::string(x["text"].s()) : "";
+        
+        // Pass it to your Ollama function!
+        std::cout << "Asking Ollama for a summary..." << std::endl;
+        std::string summary = GenerateSummary(raw_text); 
+        std::cout << "Ollama complete!" << std::endl;
+
+        crow::json::wvalue response;
+        response["summary"] = summary;
+
+        crow::response res(response);
+        res.add_header("Access-Control-Allow-Origin", "*");
+        return res;
+    });
+
     std::cout << "AetherGuard running on port 8080..." << std::endl;
     app.port(8080).multithreaded().run();
+
 }
+
+
 
 int main() {
     // Initialize DB table before starting server
