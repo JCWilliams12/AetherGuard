@@ -108,7 +108,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1>AetherGaurd</h1>
+      <h1>AetherGuard</h1>
       
       {/* HOME VIEW */}
       {view === 'home' && (
@@ -117,8 +117,6 @@ function App() {
           <button className="main-btn" onClick={() => setView('database')}>Database</button>
         </div>
       )}
-
-
 
       {/* DATABASE VIEW */}
       {view === 'database' && (
@@ -134,7 +132,7 @@ function App() {
                     className={selectedLog?.id === log.id ? "active-station" : ""}
                   >
                     <div className="station-item-content">
-                      <span className="freq-tag">{log.freq}</span>
+                      <span className="freq-tag">{Number(log.freq).toFixed(3)} MHz</span>
                       <span className="station-name">{log.name || "Unknown"}</span>
                       <span className="station-time" style={{marginLeft: "10px", fontSize: "0.85em", color: "#aaa"}}>
                         {log.time ? new Date(log.time * 1000).toLocaleString(undefined, {
@@ -157,12 +155,21 @@ function App() {
                 {selectedLog ? (
                   <>
                     <p className="summary-text"><strong>Station:</strong> {selectedLog.name}</p>
-                    <p className="summary-text"><strong>Frequency:</strong> {selectedLog.freq}</p>
-                    {/* Added Location display */}
+                    <p className="summary-text"><strong>Frequency:</strong> {Number(selectedLog.freq).toFixed(3)} MHz</p>
                     <p className="summary-text"><strong>Location:</strong> {selectedLog.location}</p>
-                    <p className="summary-text"><strong>Time:</strong> {selectedLog.time}</p>
+                    
+                    {/* NEW: Normal Time + Unix Time displayed together */}
+                    <p className="summary-text">
+                      <strong>Time:</strong> {selectedLog.time ? new Date(selectedLog.time * 1000).toLocaleString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                      }) : "Unknown"} <span style={{ fontSize: "0.85em", color: "#aaa" }}>(Unix: {selectedLog.time})</span>
+                    </p>
+                    
                     <hr style={{ borderColor: '#333', margin: '10px 0' }} />
-                    {/* Replaced placeholder with ACTUAL summary and raw text */}
                     <p className="summary-text"><strong>AI Summary:</strong> {selectedLog.summary || "No summary available"}</p>
                     <br/>
                     <p className="summary-text" style={{ fontSize: "0.85em", color: "#bbb" }}>
@@ -174,7 +181,6 @@ function App() {
                 )}
               </div>
               <div className="action-buttons">
-                {/* Notice: You might not need a "Fetch" button anymore since clicking the log instantly loads the summary! */}
                 <button className="sub-btn scan-btn" disabled={!selectedLog}>Fetch</button>
                 <button className="sub-btn delete-btn" onClick={handleDelete} disabled={!selectedLog}>Delete</button>
               </div>
@@ -200,7 +206,7 @@ function App() {
                     className={selectedStation?.id === s.id ? "active-station" : ""}
                   >
                     <div className="station-item-content">
-                      <span className="freq-tag">{s.freq}</span>
+                      <span className="freq-tag">{Number(s.freq).toFixed(3)} MHz</span>
                       <span className="station-name">{s.name}</span>
                     </div>
                   </li>
@@ -211,16 +217,18 @@ function App() {
             <div className="data-box">
               <h3>Transmission Summary</h3>
               <div className="summary-content">
+                {/* Fixed the target display below */}
                 <p className="summary-text">
-                  {selectedStation ? `Target: ${selectedStation.freq}` : "Select a frequency"}
+                  {selectedStation ? `Target: ${Number(selectedStation.freq).toFixed(3)} MHz` : "Select a frequency"}
                 </p>
                 <hr style={{ borderColor: '#333', margin: '10px 0' }} />
                 <p className="summary-text">{activeSummary}</p>
               </div>
               <div className="action-buttons">
+                {/* Ensure the "Scanning..." message formats the frequency cleanly too */}
                 <button 
                   className="sub-btn scan-btn" 
-                  onClick={() => setActiveSummary("Scanning " + (selectedStation?.freq || "") + "...")}
+                  onClick={() => setActiveSummary("Scanning " + (selectedStation ? Number(selectedStation.freq).toFixed(3) + " MHz" : "") + "...")}
                   disabled={!selectedStation}
                 >
                   Scan
