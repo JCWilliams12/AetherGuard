@@ -45,7 +45,7 @@ function App() {
     if (!selectedStation) return;
 
     // Reset UI for a new scan
-    setActiveRawText("Transcribing audio from " + selectedStation.freq + "...");
+    setActiveRawText("Transcribing audio from " + Number(selectedStation.freq).toFixed(3) + " MHz...");
     setActiveSummary("Waiting for transcription...");
 
     try {
@@ -190,11 +190,7 @@ function App() {
                 {selectedLog ? (
                   <>
                     <p className="summary-text"><strong>Station:</strong> {selectedLog.name}</p>
-<<<<<<< HEAD
                     <p className="summary-text"><strong>Frequency:</strong> {Number(selectedLog.freq).toFixed(3)} MHz</p>
-=======
-                    <p className="summary-text"><strong>Frequency:</strong> {selectedLog.freq}</p>
->>>>>>> 9255f372e3f1acf9e39c7731383c874ff2e11641
                     <p className="summary-text"><strong>Location:</strong> {selectedLog.location}</p>
                     
                     {/* NEW: Normal Time + Unix Time displayed together */}
@@ -277,18 +273,7 @@ function App() {
 
               </div>
               <div className="action-buttons">
-<<<<<<< HEAD
-                {/* Ensure the "Scanning..." message formats the frequency cleanly too */}
-                <button 
-                  className="sub-btn scan-btn" 
-                  onClick={() => setActiveSummary("Scanning " + (selectedStation ? Number(selectedStation.freq).toFixed(3) + " MHz" : "") + "...")}
-                  disabled={!selectedStation}
-                >
-                  Scan
-                </button>
-=======
                 <button className="sub-btn scan-btn" onClick={handleScan} disabled={!selectedStation}>Scan</button>
->>>>>>> 9255f372e3f1acf9e39c7731383c874ff2e11641
                 <button className="sub-btn save-btn" onClick={handleSave} disabled={!selectedStation}>Save</button>
               </div>
             </div>
