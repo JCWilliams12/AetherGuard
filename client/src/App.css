@@ -1,65 +1,107 @@
+/* Trideum Corporation Aesthetic - Light Corporate Theme */
+
 html, body {
   margin: 0;
   padding: 0;
-  background-color: #1e1e1e; /* Classic macOS Dark Mode Grey */
-  color: #ffffff;
-} /* <-- Added missing closing brace here */
+  background-color: #ffffff; /* Crisp White Background */
+  color: #2b2b2b; /* Dark charcoal text for readability */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean corporate font */
+}
 
 /* Ensure the root div takes up the full screen height */
 #root {
-  /* method is to make sure the buttons and the lettering is centered.*/
   width: 100%;
   margin: 0 auto;
   display: flex;
   place-items: center; /* Vertical and Horizontal centering */
   min-height: 100vh;
-  background-color: #1e1e1e; /* Match the background here for other pages */
+  background-color: #ffffff; /* Matches the body background */
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #333; /* Clean separator line */
+  padding-bottom: 1.5rem;
+}
+
+.logo-text {
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.2rem;
+  color: #fff;
+}
+
+.slogan {
+  font-size: 1rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #aaa; /* Muted silver for formality */
+  margin-bottom: 0.8rem;
+}
+
+.sponsor-tag {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #888;
+}
+
+.sponsor-name {
+  font-weight: bold;
+  color: #007bff; /* Trideum blue */
+  text-transform: uppercase;
 }
 
 .container {
-  /* this container contains the buttons and the title */
   display: flex;
   flex-direction: column; 
-  align-items: center;    /* to center buttons horizontally */
-  justify-content: center; /* to center buttons vertically */
+  align-items: center;    
+  justify-content: center; 
   text-align: center;
   width: 100%;
-  color: #ffffff;
+  color: #2b2b2b;
 }
 
-h1 {
-  /* method for topogrophy of radio scanner & summarizer visible */
+/* --- AETHERGUARD LOGO & HEADER --- */
+h1, .logo-text {
   font-size: 3rem;
   margin-bottom: 2rem;
-  color: #ffffff;
+  color: #002b5e; /* Deep Navy Logo/Title */
+  letter-spacing: 1px; 
+  font-weight: 800;
+}
+
+/* If your AetherGuard logo is an SVG icon, this forces it to be Navy */
+.logo-icon svg {
+  fill: #002b5e;
 }
 
 .card {
   display: flex;
-  flex-direction: column; /* stacking buttons vertically */
-  gap: 20px;             /* the space between buttons */
+  flex-direction: column; 
+  gap: 20px;             
   width: 100%;
-  max-width: 400px;      /* this should prevent buttons from getting too wide */
+  max-width: 400px;      
 }
 
 .main-btn {
-  /* method is the static backend for the buttons on homepage */
   padding: 20px 40px;
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 8px; 
   border: 2px solid transparent;
-  background-color: #646cff;
+  background-color: #004080; /* Corporate Blue */
   color: white;
   transition: all 0.25s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Softer shadow for light theme */
 }
 
 .main-btn:hover {
-  /* when a button is hovered over, this is what happens*/ 
-  transform: scale(1.05);
-  background-color: #747bff;
-  border-color: #ffffff;
+  transform: scale(1.03); 
+  background-color: #0059b3; /* Lighter blue on hover */
+  border-color: #002b5e;
 }
 
 .main-btn:active {
@@ -68,7 +110,6 @@ h1 {
 
 /* --- NEW ADDITIONS FOR DATABASE & TABLES --- */
 
-/* Wrapper for the database view to allow scrolling if data is long */
 .database-view-wrapper {
   width: 90vw;
   max-width: 1000px;
@@ -76,22 +117,22 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  color: #ffffff;
+  color: #2b2b2b;
 }
 
 /* Table Styling */
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #1a1a1a;
+  background-color: #f8f9fa; /* Very light grey for contrast against white */
   border-radius: 8px;
-  overflow: hidden; /* Rounds the corners of the table */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  color: #ffffff;
+  overflow: hidden; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Light shadow */
+  color: #2b2b2b;
 }
 
 .data-table thead {
-  background-color: #646cff;
+  background-color: #002b5e; /* Deep Navy Header */
   color: white;
 }
 
@@ -99,70 +140,68 @@ h1 {
 .data-table td {
   padding: 15px;
   text-align: left;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #dee2e6; /* Light grey separator */
 }
 
 .data-table tbody tr:hover {
-  background-color: #242424;
+  background-color: #e9ecef; /* Highlight row */
 }
 
-/* Back button styling for the database view */
 .back-btn {
   align-self: flex-start;
   padding: 10px 20px;
-  background-color: #444;
+  background-color: #6c757d; /* Neutral grey */
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   margin-bottom: 10px;
+  font-weight: bold;
 }
 
 .back-btn:hover {
-  background-color: #555;
-  color: #ffffff;
+  background-color: #5a6268;
 }
 
-/* Ensuring text inside the view is readable */
 p {
-  color: #ccc;
+  color: #495057; /* Dark grey for paragraphs */
   margin-bottom: 1rem;
 }
 
-/* new insertions*/
 /* Container for the scanning page */
 .scanning-container {
   width: 90vw;
   max-width: 1100px;
-  color: #ffffff;
+  color: #2b2b2b;
 }
 
 /* The Grid that holds the two boxes */
 .scanning-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  grid-template-columns: 1fr 1fr; 
   gap: 30px;
   margin-bottom: 20px;
 }
 
 /* Individual Box Styling */
 .data-box {
-  background: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 12px;
+  background: #ffffff; 
+  border: 1px solid #ced4da; /* Light border */
+  border-radius: 8px;
   padding: 20px;
   min-height: 400px;
   display: flex;
   flex-direction: column;
   text-align: left;
-  color: #ffffff;
+  color: #2b2b2b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .data-box h3 {
-  border-bottom: 1px solid #646cff;
+  border-bottom: 2px solid #002b5e; /* Thick Navy underline */
   padding-bottom: 10px;
   margin-top: 0;
-  color: #ffffff;
+  color: #002b5e;
 }
 
 /* Frequency List Styling */
@@ -172,20 +211,36 @@ p {
 }
 
 .frequency-list li {
-  padding: 10px;
-  border-bottom: 1px solid #222;
-  color: #ffffff;
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  color: #2b2b2b;
+}
+
+.frequency-list li:hover {
+  background-color: #f1f3f5;
+  transform: translateX(4px); 
+}
+
+/* THE HIGHLIGHT: When a station is clicked/selected */
+.frequency-list li.active-station {
+  background-color: #e6f0fa; /* Very light blue background */
+  border-left: 5px solid #004080; /* Corporate blue stripe */
+  color: #002b5e;
+  font-weight: bold;
 }
 
 .freq-tag {
-  color: #646cff;
+  color: #0059b3; /* Bright readable blue */
   font-weight: bold;
   margin-right: 10px;
 }
 
-/* Buttons inside the Summary Box */
 .action-buttons {
-  margin-top: auto; /* Pushes buttons to the bottom of the box */
+  margin-top: auto; 
   display: flex;
   gap: 10px;
 }
@@ -193,20 +248,21 @@ p {
 .sub-btn {
   flex: 1;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   font-weight: bold;
-  background: #444;
+  background: #6c757d;
   color: white;
+  transition: background-color 0.2s;
 }
 
 .gen-btn {
-  background: #646cff; /* Highlight the Generate button */
+  background: #004080; /* Highlight the Generate button in corporate blue */
 }
 
 .sub-btn:hover {
-  filter: brightness(1.2);
+  filter: brightness(0.9); /* Darken slightly instead of brighten for light theme */
 }
 
 /* Responsive fix for smaller screens */
@@ -216,55 +272,25 @@ p {
   }
 } 
 
-
-/*For selection*/
-/* Make the list items look like buttons */
-.frequency-list li {
-  padding: 12px;
-  border-bottom: 1px solid #222;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-radius: 6px;
-  margin-bottom: 4px;
-}
-
-/* Hover effect */
-.frequency-list li:hover {
-  background-color: #2a2a2a;
-  transform: translateX(5px); /* Subtle slide effect */
-}
-
-/* 4. THE HIGHLIGHT: When a station is clicked/selected */
-.frequency-list li.active-station {
-  background-color: #3d3d5c; /* Darker blue/purple */
-  border-left: 4px solid #646cff; /* "Active" indicator stripe */
-  color: #ffffff;
-}
-
 .selection-status {
   margin-top: auto;
-  font-size: 0.9rem;
-  color: #646cff;
+  font-size: 0.95rem;
+  color: #004080;
   padding-top: 10px;
-  border-top: 1px dashed #333;
+  border-top: 1px dashed #ced4da;
 } 
 
-/*For database */
-
-/* Add this to your existing CSS */
-
+/* For database */
 .delete-btn {
-  background-color: #b71c1c; /* Deep Red for deletion */
+  background-color: #d32f2f; /* Deep Red for deletion */
+  color: white;
 }
 
 .delete-btn:hover {
-  background-color: #d32f2f;
-  filter: brightness(1.2);
+  background-color: #b71c1c;
 }
 
 /* Ensure the grid works in the database view wrapper too */
 .database-view-wrapper .scanning-grid {
   width: 100%;
 }
-/* <-- Removed the extra closing brace from here */
-

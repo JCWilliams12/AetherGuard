@@ -147,8 +147,16 @@ function App() {
 
   return (
     <div className="container">
-      <h1>AetherGuard</h1>
-      
+      {/* HEADER SECTION */}
+      <header className="app-header">
+        <h1 className="logo-text">AetherGuard</h1>
+        <p className="slogan">Radio Intelligence, Refined.</p>
+        <div className="sponsor-tag">
+          <span>Sponsored by </span>
+          <span className="sponsor-name">Trideum</span>
+        </div>
+      </header>
+
       {/* HOME VIEW */}
       {view === 'home' && (
         <div className="card">
