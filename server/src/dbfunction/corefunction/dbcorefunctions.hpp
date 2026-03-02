@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <sqlite3.h>
 
 // The "Container" for your radio data
 struct RadioLog {
@@ -14,6 +15,7 @@ struct RadioLog {
     std::string channelName;
 };
 
+extern sqlite3* db;
 void createTable();
 void insertLog(double freq, long long time, std::string location, std::string rawT, std::string summary, std::string channelName);
 int removeLog(double freq, long long time, std::string location);

@@ -26,6 +26,6 @@ std::string GenerateSummary(std::string transcript) {
 } catch (...) {
     std::cerr << "\n[CRITICAL ERROR] Unknown failure occurred." << std::endl;
 }
-
+    return "Error generating summary.";
     
 }

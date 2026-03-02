@@ -7,6 +7,8 @@
 #include "crow.h"
 #include "ollamatest.hpp"
 #include "whispertinytest.hpp"
+#include <sqlite3.h>
+
 
 void openFrontEnd(){
     crow::SimpleApp app;
@@ -116,18 +118,6 @@ void openFrontEnd(){
         return res;
     });
 
-    // =======================================================
-    // ROUTE 3: CATCH-ALL 404 LOGGER
-    // =======================================================
-    app.catchall_route()([](const crow::request& req, crow::response& res) {
-        std::cout << "\n[404 DEBUG] Frontend asked for URL: " << req.url 
-                  << " | Method: " << crow::method_name(req.method) << std::endl;
-        
-        res.code = 404;
-        res.add_header("Access-Control-Allow-Origin", "*");
-        res.body = "Route completely missed";
-        res.end();
-    });
 
     // =======================================================
     // ROUTE: STEP 1 - WHISPER TRANSCRIPTION
@@ -183,6 +173,45 @@ void openFrontEnd(){
         return res;
     });
 
+
+    CROW_ROUTE(app, "/api/search")([&](const crow::request& req) {
+        auto q = req.url_params.get("q");
+        std::cout << "\n--- SEARCH ROUTE HIT ---" << std::endl;
+    
+        if (!q) {
+            std::cout << "Error: No query parameter 'q' found." << std::endl;
+            return crow::response(400, "[]");
+        }
+
+        try {
+            double freq = std::stod(q);
+            std::cout << "Searching for Frequency: " << freq << " MHz" << std::endl;
+        
+            std::string results = filterByFrequency(freq);
+            std::cout << "Database returned: " << results << std::endl;
+        
+            crow::response res(results);
+            res.add_header("Access-Control-Allow-Origin", "*");
+            return res;
+        } catch (const std::exception& e) {
+            std::cout << "Conversion Error: " << e.what() << std::endl;
+            return crow::response(200, "[]");
+        }
+    });
+
+    // =======================================================
+    // CATCH-ALL 404 LOGGER: !!Important!! This has to be the last declared route.
+    // =======================================================
+    app.catchall_route()([](const crow::request& req, crow::response& res) {
+        std::cout << "\n[404 DEBUG] Frontend asked for URL: " << req.url 
+                  << " | Method: " << crow::method_name(req.method) << std::endl;
+        
+        res.code = 404;
+        res.add_header("Access-Control-Allow-Origin", "*");
+        res.body = "Route completely missed";
+        res.end();
+    });
+
     std::cout << "AetherGuard running on port 8080..." << std::endl;
     app.port(8080).multithreaded().run();
 
@@ -201,6 +230,11 @@ int main() {
     insertLog(157.570, 9718900000, "Huntsville, AL", "[Raw Audio Data]", "AI summary", "Big Leagues");
     // Launch the Crow server
     openFrontEnd();
-    
+
+    if (db) {
+        std::cout << "Shutting down: Closing database..." << std::endl;
+        sqlite3_close(db);
+    }
+
     return 0;
 }

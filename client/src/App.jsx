@@ -15,6 +15,9 @@ function App() {
   const [selectedLog, setSelectedLog] = useState(null);
   const [logs, setLogs] = useState([]);
 
+  // NEW state for search term
+  const [searchTerm, setSearchTerm] = useState("");
+
   const fetchLogs = async () => {
     try {
       const res = await fetch('http://localhost:8080/api/logs'); 
@@ -34,6 +37,20 @@ function App() {
       console.error("Link to C++ failed:", err);
     }
   };
+
+  const searchDatabase = async () => {
+  try {
+    // We send the 'searchTerm' variable to our C++ Crow server
+    const response = await fetch(`http://localhost:8080/api/search?q=${searchTerm}`);
+    const data = await response.json();
+
+    
+    
+    setLogs(data); // This will replace the logs list with the search results
+  } catch (error) {
+    console.error("Failed to connect to C++ backend:", error);
+  }
+};
 
   useEffect(() => {
     fetchStations();
@@ -170,7 +187,11 @@ function App() {
         <div className="database-view-wrapper">
           <div className="scanning-grid">
             <div className="data-box">
-              <h3>Saved Logs</h3>
+              <div className="search-bar-container">
+                <h3 style={{ borderBottom: 'none', paddingBottom: 0, margin: 0 }}>Saved Logs</h3>
+                <input type="text" placeholder="Search by freq..." className="search-input" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => searchDatabase()}>Search</button>
+              </div>
               <ul className="frequency-list">
                 {logs.map(log => (
                   <li 

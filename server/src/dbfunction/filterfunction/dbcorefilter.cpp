@@ -30,8 +30,30 @@ static std::string formatRowAsString(sqlite3_stmt* stmt) {
     return box.str();
 }
 
+// Returns result as a JSON string for React to parse and display in the UI
+static std::string formatRowAsJSON(sqlite3_stmt* stmt) {
+    // Escape quotes if necessary, but for now, let's get the raw data
+    std::string freq = (const char*)sqlite3_column_text(stmt, 0);
+    std::string time = (const char*)sqlite3_column_text(stmt, 1);
+    std::string loc  = (const char*)sqlite3_column_text(stmt, 2);
+    std::string txt  = (const char*)sqlite3_column_text(stmt, 3);
+    std::string sum  = (const char*)sqlite3_column_text(stmt, 4);
+
+    std::stringstream json;
+    json << "{"
+         << "\"id\": \"" << time << "_" << freq << "\"," // Unique key
+         << "\"freq\": " << freq << ","
+         << "\"time\": " << time << ","
+         << "\"location\": \"" << loc << "\","
+         << "\"name\": \"" << loc << "\"," // Mapping 'location' to 'name' for your UI
+         << "\"summary\": \"" << sum << "\","
+         << "\"rawT\": \"" << txt << "\""
+         << "}";
+    return json.str();
+}
+
 // Filter by Frequency
-std::string filterByFrequency(double freq) {
+/*std::string filterByFrequency(double freq) {
     sqlite3 *db;
     sqlite3_stmt *stmt;
     std::string results = "";
@@ -49,6 +71,45 @@ std::string filterByFrequency(double freq) {
     sqlite3_finalize(stmt);
     sqlite3_close(db);
     return results.empty() ? "No records found for that frequency." : results;
+}*/
+
+
+//Filter by frequency now returns JSON
+std::string filterByFrequency(double freq) {
+    // 1. Reference the existing database connection 
+    // (Assuming 'db' is opened elsewhere in your project)
+    extern sqlite3* db; 
+
+    // 2. Define the SQL logic
+    const char* sql = "SELECT * FROM RadioLogs WHERE freq BETWEEN ? - 0.001 AND ? + 0.001;";
+    sqlite3_stmt* stmt;
+    
+    std::string results = "["; 
+    bool first = true;
+
+    // 3. Prepare the search
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
+        
+        // This puts your 'freq' variable into the '?' in the SQL string
+        sqlite3_bind_double(stmt, 1, freq);
+        sqlite3_bind_double(stmt, 2, freq);
+
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            if (!first) results += ","; 
+            results += formatRowAsJSON(stmt);
+            first = false;
+        }
+        
+        sqlite3_finalize(stmt); // Always clean up the statement
+    } else {
+        std::cerr << "SQL Error: " << sqlite3_errmsg(db) << std::endl;
+    }
+
+    results += "]"; 
+    
+    // REMOVED: sqlite3_close(db); <-- Stay away from this!
+    
+    return results;
 }
 
 // Filter by Location

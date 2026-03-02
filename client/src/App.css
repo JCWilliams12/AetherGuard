@@ -294,3 +294,38 @@ p {
 .database-view-wrapper .scanning-grid {
   width: 100%;
 }
+
+/* Custom Search Input for AetherGuard */
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #002b5e; /* We move the underline to the WHOLE row */
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  
+  /* FORCE THE COLORS HERE */
+  background-color: #ffffff !important; 
+  color: #000000 !important;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #004080;
+  background-color: #ffffff; /* Keep it white on focus */
+  box-shadow: 0 0 0 2px rgba(0, 64, 128, 0.2);
+}
+
+/* Optional: Make the placeholder text a soft gray so it's visible but not black */
+.search-input::placeholder {
+  color: #6c757d;
+  opacity: 1; 
+}

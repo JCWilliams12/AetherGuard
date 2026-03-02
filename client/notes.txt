@@ -1,0 +1,10 @@
+for record
+
+changes:
+    database view has input and search button app.jsx
+    searchDatabase method added app.jsx
+    setSearchTerm state app.jsx
+    filterByFrequency changed to return json dbcorefilter.cpp
+    crow route for filterByFrequency added in main.cpp
+    changed db open logic dbcorefunctions.txt
+    

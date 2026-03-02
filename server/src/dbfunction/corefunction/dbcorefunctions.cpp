@@ -10,10 +10,11 @@ extern "C" {
 
 const char* DB_NAME = "server/database/app.db";
 
+sqlite3 *db = nullptr;
 // -=- 1. CREATE TABLE -=-
 // Creates the table only if it doesn't exist yet.
 void createTable() {
-    sqlite3 *db;
+    //sqlite3 *db;  This was opening the database every time we called createTable, which is not what we want. We should open it once and keep it open.
     char *zErrMsg = 0;
     int rc;
 
@@ -45,21 +46,19 @@ void createTable() {
         fprintf(stdout, "Table 'RadioLogs' created or verified successfully with new schema.\n");
     }
 
-    sqlite3_close(db);
+    //sqlite3_close(db);  Can't sort cause its a closed connection.
 }
 
 // -=- 2. INSERT ROW -=-
 // Uses "INSERT OR REPLACE" to update existing logs that match the primary key
 void insertLog(double freq, long long time, std::string location, std::string rawT, std::string summary, std::string channelName) {
-    sqlite3 *db;
+    if (!db) {
+        std::cerr << "Error: Database not initialized!" << std::endl;
+        return; // or return; for void functions
+}
     sqlite3_stmt *stmt;
     int rc;
 
-    rc = sqlite3_open(DB_NAME, &db);
-    if (rc) {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return;
-    }
 
     const char *sql = "INSERT OR REPLACE INTO RadioLogs (freq, time, location, rawT, summary, channelName) VALUES (?, ?, ?, ?, ?, ?);";
 
@@ -68,7 +67,6 @@ void insertLog(double freq, long long time, std::string location, std::string ra
 
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
         return;
     }
 
@@ -91,25 +89,26 @@ void insertLog(double freq, long long time, std::string location, std::string ra
 
     // Clean up
     sqlite3_finalize(stmt);
-    sqlite3_close(db);
+    // Do NOT close the database here, as we want to keep it open for the app's lifetime.
 }
 
 // -=- 3. QUERY ALL -=-
 std::vector<RadioLog> getAllLogs() {
+    std::cout << "Debug: db pointer is " << db << std::endl;
+    if (!db) {
+        std::cerr << "Error: Database not initialized!" << std::endl;
+        return {}; // Return empty vector if database is not initialized
+    }
     std::vector<RadioLog> logs;
-    sqlite3 *db;
+    int rc;
     sqlite3_stmt *stmt;
 
-    if (sqlite3_open(DB_NAME, &db) != SQLITE_OK) {
-        std::cerr << "Can't open database: "  << sqlite3_errmsg(db) << std::endl;
-        return logs;
-    }
 
     const char *sql = "SELECT freq, time, location, rawT, summary, channelName FROM RadioLogs ORDER BY time DESC;";
 
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) != SQLITE_OK) {
         std::cerr << "SQL error: " << sqlite3_errmsg(db) << std::endl;
-        sqlite3_close(db);
+       
         return logs;
     }
 
@@ -140,22 +139,19 @@ std::vector<RadioLog> getAllLogs() {
     std::cout << "Total logs sent to frontend: " << logs.size() << "\n" << std::endl;
 
     sqlite3_finalize(stmt);
-    sqlite3_close(db);
+    
     return logs;
 }
 
 // -=- 4. REMOVE ROW -=-
 // Deletes a specific log based on its unique Composite Key (Freq + Time + Location)
 int removeLog(double freq, long long time, std::string location) {
-    sqlite3 *db;
+    if (!db) {
+        std::cerr << "Error: Database not initialized!" << std::endl;
+        return 0; // Return 0 to indicate failure
+    }
     sqlite3_stmt *stmt;
     int rc;
-
-    rc = sqlite3_open(DB_NAME, &db);
-    if (rc) {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return 0;
-    }
 
     // Now matching all three parts of the composite key
     const char *sql = "DELETE FROM RadioLogs WHERE ROUND(freq, 3) = ROUND(?, 3) AND time = ? AND location = ?;";
@@ -164,7 +160,6 @@ int removeLog(double freq, long long time, std::string location) {
 
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
         return 0;
     }
 
@@ -185,12 +180,12 @@ int removeLog(double freq, long long time, std::string location) {
     }
 
     sqlite3_finalize(stmt);
-    sqlite3_close(db);
     return 1; 
 }
 
 // -=- 5. OPEN DATABASE CHECK -=-
-void openDatabase(){
+//Test Function, not needed.
+/*void openDatabase(){
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc;
@@ -203,4 +198,4 @@ void openDatabase(){
         fprintf(stdout, "Opened database successfully\n");
     }
     sqlite3_close(db);
-}
+}*/
